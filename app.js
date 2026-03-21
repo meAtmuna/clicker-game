@@ -1,6 +1,7 @@
 const biryaniBtn = document.getElementById("biryani-btn");
 const biryaniCount = document.getElementById("biryani-count");
 const shopContainer = document.getElementById("shop-items");
+const statsContainer = document.getElementById("stats-items");
 
 let totalBiryaniClick = 0;
 let itemsOwned = [];
@@ -53,6 +54,24 @@ function createShopItems() {
     });
 }
 
+function createStatsItems() {
+    document.querySelectorAll(".stats-item").forEach((element) => {
+        element.remove();
+    });
+
+    itemsOwned.forEach(item => {
+        const statsItem = document.createElement("div");
+        statsItem.className = "stats-item";
+        
+        statsItem.innerHTML = `
+            <h3>${item.name} </h3>
+            <p>${item.amount}</p>
+        `;
+
+        statsContainer.appendChild(statsItem);
+    })
+}
+
 function buyItem(name) {
     const item = shopItems.find(i => i.name === name);
 
@@ -75,6 +94,7 @@ function buyItem(name) {
         item.cost = item.startingCost + item.startingCost * amount ** 2;
 
         createShopItems();
+        createStatsItems();
         
     } else {
 
@@ -93,4 +113,26 @@ setInterval(() => {
     }
 }, 1000);
 
+function saveGame() {
+    localStorage.setItem("biryani" , totalBiryaniClick);
+    localStorage.setItem("items", JSON.stringify(itemsOwned));
+}
+
+function loadGame() {
+    const savedBiryani = localStorage.getItem("biryani");
+    const savedItems = localStorage.getItem("items");
+
+    if (savedBiryani) {
+        totalBiryaniClick = Number(savedBiryani);
+    }
+    if (savedItems) {
+        itemsOwned = JSON.parse(savedItems);
+    }
+
+    biryaniCount.textContent = totalBiryaniClick;
+}
+
+loadGame();
+setInterval(saveGame, 1000);
 createShopItems();
+createStatsItems();
