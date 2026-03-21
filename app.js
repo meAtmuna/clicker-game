@@ -3,9 +3,13 @@ const biryaniCount = document.getElementById("biryani-count");
 const shopContainer = document.getElementById("shop-items");
 
 let totalBiryaniClick = 0;
+let itemsOwned = [];
 
 function biryaniClick() {
-    totalBiryaniClick++;
+    const masala = itemsOwned.find(i => i.name === "Masala");
+    const multiplier = masala ? masala.amount: 0;
+
+    totalBiryaniClick += 1 * 2 ** multiplier;
     biryaniCount.textContent = totalBiryaniClick;
 }
 
@@ -29,14 +33,19 @@ const shopItems= [
 ]
 
 function createShopItems() {
+    document.querySelectorAll(".shop-item").forEach((element) =>{
+        element.remove();
+    });
+
     shopItems.forEach(item =>{
         const shopItem = document.createElement("div");
+        shopItem.className = "shop-item";
         
         shopItem.innerHTML =`
             <h3>${item.name}</h3>
             <p>${item.description}</p>
             <button onclick="buyItem('${item.name}')">
-                Buy${item.cost}
+                Buy ${item.cost}
             </button>
         `;
         
@@ -51,8 +60,21 @@ function buyItem(name) {
 
         totalBiryaniClick -= item.cost;
         biryaniCount.textContent = totalBiryaniClick;
+
+        let amount = 1;
         
-        console.log("bought:" , name);
+        const owned =  itemsOwned.find(i => i.name === name);
+
+        if (owned) {
+            owned.amount++;
+            amount = owned.amount;
+        } else {
+            itemsOwned.push({name: name, amount: 1});
+        }
+        
+        item.cost = item.startingCost + item.startingCost * amount ** 2;
+
+        createShopItems();
         
     } else {
 
@@ -60,5 +82,15 @@ function buyItem(name) {
     }
     
 }
+
+setInterval(() => {
+    const chef = itemsOwned.find(i => i.name === "chef");
+    if (chef) {
+        for (let i = 0; i < chef.amount; i++) {
+
+            biryaniClick();
+        }
+    }
+}, 1000);
 
 createShopItems();
