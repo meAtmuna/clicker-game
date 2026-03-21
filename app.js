@@ -35,11 +35,30 @@ function createShopItems() {
         shopItem.innerHTML =`
             <h3>${item.name}</h3>
             <p>${item.description}</p>
-            <button>${item.cost}</button>
+            <button onclick="buyItem('${item.name}')">
+                Buy${item.cost}
+            </button>
         `;
         
         shopContainer.appendChild(shopItem);
     });
+}
+
+function buyItem(name) {
+    const item = shopItems.find(i => i.name === name);
+
+    if(totalBiryaniClick >= item.cost) {
+
+        totalBiryaniClick -= item.cost;
+        biryaniCount.textContent = totalBiryaniClick;
+        
+        console.log("bought:" , name);
+        
+    } else {
+
+        alert("not enough biryani!");
+    }
+    
 }
 
 createShopItems();
