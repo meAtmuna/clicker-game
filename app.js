@@ -59,17 +59,29 @@ function createStatsItems() {
         element.remove();
     });
 
-    itemsOwned.forEach(item => {
+    if (itemsOwned.length > 0) {
+
+        itemsOwned.forEach(item => {
+            const statsItem = document.createElement("div");
+            statsItem.className = "stats-item";
+            
+            statsItem.innerHTML = `
+                <h3>${item.name} </h3>
+                <p>${item.amount}</p>
+            `;
+
+            statsContainer.appendChild(statsItem);
+        })
+    } else{
         const statsItem = document.createElement("div");
         statsItem.className = "stats-item";
-        
+
         statsItem.innerHTML = `
-            <h3>${item.name} </h3>
-            <p>${item.amount}</p>
-        `;
+                <p>No Item Yet</p>
+            `;
 
         statsContainer.appendChild(statsItem);
-    })
+    }
 }
 
 function buyItem(name) {
@@ -116,11 +128,13 @@ setInterval(() => {
 function saveGame() {
     localStorage.setItem("biryani" , totalBiryaniClick);
     localStorage.setItem("items", JSON.stringify(itemsOwned));
+    localStorage.setItem("shop", JSON.stringify(shopItems));
 }
 
 function loadGame() {
     const savedBiryani = localStorage.getItem("biryani");
     const savedItems = localStorage.getItem("items");
+    const savedShop = localStorage.getItem("shop");
 
     if (savedBiryani) {
         totalBiryaniClick = Number(savedBiryani);
@@ -128,8 +142,22 @@ function loadGame() {
     if (savedItems) {
         itemsOwned = JSON.parse(savedItems);
     }
+    if (savedShop) {
+        const savedShopItems = JSON.parse(savedShop);
+        savedShopItems.forEach(savedItem =>{
+            const item = shopItems.find(i => i.name === savedItem.name);
+            if (item) {
+                item.cost = savedItem.cost;
+            }
+        })
+    }
 
     biryaniCount.textContent = totalBiryaniClick;
+}
+
+function resetGame() {
+    localStorage.clear();
+    location.reload();
 }
 
 loadGame();
