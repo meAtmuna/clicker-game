@@ -20,16 +20,25 @@ biryaniBtn.addEventListener("click", function () {
 
 const shopItems= [
     {
-        name:"chef",
-        description: "chefs cook biryani for you",
-        cost: 10,
-        startingCost: 10,
+        name:"Chef",
+        description: "Chefs cook biryani for you",
+        cost: 25,
+        startingCost: 25,
+        image: "images/chef.jpg",
     },
     {
         name: "Masala",
         description: "Double your biryani per click",
-        cost: 50,
-        startingCost: 50,
+        cost: 150,
+        startingCost: 150,
+        image: "images/biryaniMasala.jpg",
+    },
+    {
+        name: "Deg",
+        description: "English: Cook huge amounts of biryani automatically with this giant deg / Pakistani: Is bari deg ke sath khud ba khud bohat zyada biryani banao",
+        cost: 12500,
+        startingCost: 12500,
+        image: "images/biryaniDeg.webp",
     },
 ]
 
@@ -43,7 +52,10 @@ function createShopItems() {
         shopItem.className = "shop-item";
         
         shopItem.innerHTML =`
-            <h3>${item.name}</h3>
+            <div class="shop-img-name">
+                <img src="${item.image}" width="50">
+                <h3>${item.name}</h3>
+            </div>
             <p>${item.description}</p>
             <button onclick="buyItem('${item.name}')">
                 Buy ${item.cost}
@@ -62,10 +74,12 @@ function createStatsItems() {
     if (itemsOwned.length > 0) {
 
         itemsOwned.forEach(item => {
+            const shopItem = shopItems.find(i => i.name === item.name)
             const statsItem = document.createElement("div");
             statsItem.className = "stats-item";
             
             statsItem.innerHTML = `
+                <img src="${shopItem.image}" width="50">
                 <h3>${item.name} </h3>
                 <p>${item.amount}</p>
             `;
@@ -116,12 +130,18 @@ function buyItem(name) {
 }
 
 setInterval(() => {
-    const chef = itemsOwned.find(i => i.name === "chef");
+    const chef = itemsOwned.find(i => i.name === "Chef");
+    const deg = itemsOwned.find(i => i.name === "Deg");
     if (chef) {
         for (let i = 0; i < chef.amount; i++) {
 
             biryaniClick();
         }
+    }
+
+    if (deg) {
+        totalBiryaniClick += deg.amount * 50;
+        biryaniCount.textContent = totalBiryaniClick;
     }
 }, 1000);
 
